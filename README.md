@@ -1,169 +1,242 @@
-# Kinect2 Calibration
+# IAI Kinect2
 
 ## Maintainer
 
 - [Thiemo Wiedemeyer](https://ai.uni-bremen.de/team/thiemo_wiedemeyer) <<wiedemeyer@cs.uni-bremen.de>>, [Institute for Artificial Intelligence](http://ai.uni-bremen.de/), University of Bremen
 
+## Read this first
+
+Please read this README and the ones of the individual components throughly before asking questions. We get a lot of repeated questions, so when you have a problem, we urge everyone to check the [github issues  (including closed ones)](https://github.com/code-iai/iai_kinect2/issues?utf8=%E2%9C%93&q=is%3Aissue). Your issue is very likely discussed there already.
+
+The goal of this project is to give you a driver and the tools needed to receive data from the Kinect-2 sensor, in a way useful for robotics. You will still need to know how to use ROS to make use of it. Please follow the [ROS tutorials](http://wiki.ros.org/ROS/Tutorials). You will also need to learn how to work with point-clouds, or depth-clouds, or images (computer vision) to do useful things with the data.
+
 *Note:* ***Please use the GitHub issues*** *for questions and problems regarding the iai_kinect2 package and its components.* ***Do not write emails.***
+
+## Table of contents
+- [Description](#description)
+- [FAQ](#faq)
+- [Dependencies](#dependencies)
+- [Install](#install)
+- [GPU acceleration](#gpu-acceleration)
+  - [OpenCL with AMD](#opencl-with-amd)
+  - [OpenCL/CUDA with Nvidia](#openclcuda-with-nvidia)
+  - [OpenCL with Intel](#opencl-with-intel)
+- [Citation](#citation)
+- [Screenshots](#screenshots)
 
 ## Description
 
-This tool uses OpenCV to calibrate two cameras to each other. It is specially designed for the Kinect One. It uses chess or circle boards.
+This is a collection of tools and libraries for a ROS Interface to the Kinect One (Kinect v2).
+
+It contains:
+- [a calibration tool](kinect2_calibration) for calibrating the IR sensor of the Kinect One to the RGB sensor and the depth measurements
+- [a library](kinect2_registration) for depth registration with OpenCL support
+- [the bridge](kinect2_bridge) between [libfreenect2](https://github.com/OpenKinect/libfreenect2) and [ROS](http://www.ros.org/)
+- [a viewer](kinect2_viewer) for the images / point clouds
+
+## FAQ
+
+#### If I have any question or someting is not working, what should I do first?
+
+First you should look at this FAQ and the [FAQ from libfreenect2](https://github.com/OpenKinect/libfreenect2#faq).
+Secondly, look at [issue page from libfreenect2](https://github.com/OpenKinect/libfreenect2/issues) and
+the [issue page of iai_kinect2](https://github.com/code-iai/iai_kinect2/issues) for similar issues and solutions.
+
+#### Point clouds are not being published?
+
+Point clouds are only published when the launch file is used. Make sure to start kinect2_bridge with `roslaunch kinect2_bridge kinect2_bridge.launch`.
+
+#### Will it work with OpenCV 3.0
+
+Short answer: No.
+
+Long answer: Yes, it is possible to compile this package with OpenCV 3.0, but it will not work.
+This is because cv_bridge is used, which itself is compiled with OpenCV 2.4.x in ROS Indigo/Jade and
+linking against both OpenCV versions is not possible. Working support for OpenCV 3.0 might come with a future ROS release.
+
+#### kinect2_bridge is not working / crashing, what is wrong?
+
+There are many reasons why `kinect2_bridge` might not working. The first thing to find out whether the problem is related to `kinect2_bridge` or `libfreenect2`.
+A good tool for testing is `Protonect`, it is a binary located in `libfreenect2/build/bin/Protonect`.
+It uses libfreenect2 directly with a minimal dependency on other libraries, so it is a good tool for the first tests.
+
+Execute:
+- `./Protonect gl` to test OpenGL support.
+- `./Protonect cl` to test OpenCL support.
+- `./Protonect cpu` to test CPU support.
+
+Before running `kinect2_bridge` please make sure `Protonect` is working and showing color, depth and ir images.
+If some of them are black, than there is a problem not related to `kinect2_bridge` and you should look at the issues from the libfreenect2 GitHub page for help.
+
+If one of them works, try out the one that worked with `kinect2_bridge`: `rosrun kinect2_bridge kinect2_bridge _depth_method:=<opengl|opencl|cpu>`.
+You can also change the registration method with `_reg_method:=<cpu|opencl>`.
+
+#### Protonect works fine, but kinect2_bridge is still not working / crashing.
+
+If that is the case, you have to make sure that `Protonect` uses the same version of `libfreenect2` as `kinect2_bridge` does.
+To do so, run `make` and `sudo make install` in the build folder again. And try out `kinect2_bridge` again.
+
+```bash
+cd libfreenect2/build
+make & sudo make install
+```
+
+Also make sure that you are not using OpenCV 3.0.
+
+If it is still crashing, compile it in debug and run it with gdb:
+
+```bash
+cd <catkin_ws>
+catkin_make -DCMAKE_BUILD_TYPE="Debug"
+cd devel/lib/kinect2_bridge
+gdb kinect2_bridge
+# inside gdb: run until it crashes and do a backtrace
+run
+bt
+quit
+```
+
+Open an issue and post the problem description and the output from the backtrace (`bt`).
+
+#### kinect2_bridge hangs and prints "waiting for clients to connect"
+
+This is the normal behavior. 'kinect2_bridge' will only process data when clients are connected (ROS nodes listening to at least one of the topics).
+This saves CPU and GPU resources. As soon as you start the `kinect_viewer` or `rostopic hz` on one of the topics, processing should start.
+
+#### rosdep: Cannot locate rosdep definition for [kinect2_bridge] or [kinect2_registration]
+
+`rosdep` will output errors on not being able to locate `[kinect2_bridge]` and `[kinect2_registration]`.
+That is fine because they are all part of the iai_kinect2 package and `rosdep` does not know these packages.
+
+#### Protonect or kinect2_bridge outputs [TransferPool::submit] failed to submit transfer
+
+This indicates problems with the USB connection.
+
+#### I still have an issue, what should I do?
+
+First of all, check the issue pages on GitHub for similar issues, as they might contain solutions for them.
+By default you will only see the open issues, but if you click on `closed` you will the the ones solved. There is also a search field which helps to find similar issues.
+
+If you found no solution in the issues, feel free to open a new issue for your problem. Please describe your problem in detail and provide error messages and log output.
 
 ## Dependencies
 
 - ROS Hydro/Indigo
-- OpenCV
+- OpenCV (2.4.x, using the one from the official Ubuntu repositories is recommended)
+- PCL (1.7.x, using the one from the official Ubuntu repositories is recommended)
+- Eigen (optional, but recommended)
+- OpenCL (optional, but recommended)
+- [libfreenect2](https://github.com/OpenKinect/libfreenect2) (>= v0.2.0, for stability checkout the latest stable release)
 
-*for the ROS packages look at the package.xml*
+## Install
 
-## Usage
+1. Install the ROS. [Instructions for Ubuntu 14.04](http://wiki.ros.org/indigo/Installation/Ubuntu)
+2. [Setup your ROS environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
+3. Install [libfreenect2](https://github.com/OpenKinect/libfreenect2):
 
-```
-kinect2_calibration [options]
-  name: 'any string' equals to the kinect2_bridge topic base name
-  mode: 'record' or 'calibrate'
-  source: 'color', 'ir', 'sync', 'depth'
-  board:
-    'circle<WIDTH>x<HEIGHT>x<SIZE>'  for symmetric circle grid
-    'acircle<WIDTH>x<HEIGHT>x<SIZE>' for asymmetric circle grid
-    'chess<WIDTH>x<HEIGHT>x<SIZE>'   for chessboard pattern
-  distortion model: 'rational' for using model with 8 instead of 5 coefficients
-  output path: '-path <PATH>'
-```
+   Follow [the instructions](https://github.com/OpenKinect/libfreenect2#debianubuntu-1404) and enable C++11 by using `cmake .. -DENABLE_CXX11=ON` instead of `cmake ..`. If you are compiling libfreenect2 with CUDA, use `cmake .. -DENABLE_CXX11=ON -DCUDA_PROPAGATE_HOST_FLAGS=off`.
 
-## Key bindings
+   If something is not working, check out the latest stable release, for example `git checkout v0.2.0`.
 
-Windows:
-- `ESC`, `q`: Quit
-- `SPACE`, `s`: Save the current image for calibration
-- `l`: decrease min and max value for IR value rage
-- `h`: increase min and max value for IR value rage
-- `1`: decrease min value for IR value rage
-- `2`: increase min value for IR value rage
-- `3`: decrease max value for IR value rage
-- `4`: increase max value for IR value rage
+4. Clone this repository into your catkin workspace, install the dependencies and build it:
 
-Terminal:
-- `CRTL`+`c`: Quit
+    ```bash
+    cd ~/catkin_ws/src/
+    git clone https://github.com/code-iai/iai_kinect2.git
+    cd iai_kinect2
+    rosdep install -r --from-paths .
+    cd ~/catkin_ws
+    catkin_make -DCMAKE_BUILD_TYPE="Release"
+    ```
 
-## Calibration patterns
+   *Note: `rosdep` will output errors on not being able to locate `[kinect2_bridge]` and `[depth_registration]`.
+   That is fine because they are all part of the iai_kinect2 package and `rosdep` does not know these packages.*
 
-Any chessboard pattern or symmetric or asymmetric circle grid should work. Three different chessboard patterns are located inside the `kinect2_calibration/patterns` folder:
-- [chess5x7x0.03.pdf](patterns/chess5x7x0.03.pdf)
-- [chess7x9x0.025.pdf](patterns/chess7x9x0.025.pdf)
-- [chess9x11x0.02.pdf](patterns/chess9x11x0.02.pdf)
+   *Note: If you installed libfreenect2 somewhere else than in `$HOME/freenect2` or a standard location like `/usr/local`
+   you have to specify the path to it by adding `-Dfreenect2_DIR=path_to_freenect2/lib/cmake/freenect2` to `catkin_make`.*
 
-Other patterns are available at OpenCV:
-- [Chessboard pattern](http://docs.opencv.org/2.4.2/_downloads/pattern.png)
-- [Asymmetric circle grid](http://docs.opencv.org/2.4.2/_downloads/acircles_pattern.png)
+5. Connect your sensor and run `kinect2_bridge`:
 
-The standard board is a 7x6 0.108m chessboard from the PR2. But any other board can be specified with as parameter. For example a circle board with 8x7 circles in 0.02m distance between them `rosrun kinect2_calibration kinect2_calibration record color circle8x7x0.02`.
+    ```bash
+    roslaunch kinect2_bridge kinect2_bridge.launch
+    ```
 
-Recently, to calibrate our sensors, we have used the chess5x7x0.03 pattern, as it can be printed easily on a good laser printer on A4 paper.
+6. Calibrate your sensor using the `kinect2_calibration`. [Further details](kinect2_calibration#calibrating-the-kinect-one)
+7. Add the calibration files to the `kinect2_bridge/data/<serialnumber>` folder. [Further details](kinect2_bridge#first-steps)
+8. Restart `kinect2_bridge` and view the results using `rosrun kinect2_viewer kinect2_viewer kinect2 sd cloud`.
 
+## GPU acceleration
 
-## Calibrating the Kinect One
+### OpenCL with AMD
 
-*Recommended preparation:*
-- Print your calibration pattern (for the examples, we used chess5x7x0.03) and glue it to a flat object. It is very important that the calibration pattern is very flat. Also, check with a caliper that the distance between the features of the printed pattern is correct. Sometimes printers scale the document, and the calibration won't work. For the mentioned pattern, the distance between intersections of black and white corners should be 3cm exactly.
-- Get two tripods, one for holding the calibration pattern, and another one for holding the kinect2 sensor. Ideally, the tripod for the kinect2 will have a ball head, to allow you to move it easily and lock it in place before you take an image. It is very important that the sensor is stable (and the image is clear and not blurred) before you take an image. The tripod will specially help you to make sure that the sensor has not moved between the moment the IR and the RGB images are taken.
-- When recording images for all the steps indicated below (RGB, IR, SYNC), start the recording program, then press spacebar to record each image. The calibration pattern should be detected (indicated by color lines overlayed on the calibration pattern), and the image should be clear and stable. 
-- It is recommended to take images that show the calibration pattern in all areas of the image, and with different orientations of the pattern (tilting the pattern relative to the plane of the image), and at least two distances. So you can easily reach 100 images per calibration set.
-- We normally start at a short distance, where the calibration pattern covers most of the image, there we take several pictures tilting the calibration pattern vertically, then horizontally. Imagine a ray coming out of the camera sensor, this makes sure that you have images where the calibration pattern is not perpendicular to that ray.
-- Then we move the calibration pattern further away, and for different orientations (tilting) of the pattern, we take many images so that we calibration pattern is present around most of the camera image. For example, at first the calibration pattern is on the left upper corner. Then on the next image on the upper middle, then on the upper right corner. Then some images where the calibration pattern is in the middle vertically, etc...
+Install the latest version of the AMD Catalyst drivers from https://support.amd.com and follow the instructions. Also install `opencl-headers`.
 
-*Typical calibration setup*
-![kinect2_calibration_setup_small.jpg](https://ai.uni-bremen.de/_media/kinect2_calibration_setup_small.jpg)
-
-*Detailed steps:*
-
-0. If you haven't already, start the kinect2_bridge with a low number of frames per second (to make it easy on your CPU): `rosrun kinect2_bridge kinect2_bridge _fps_limit:=2`
-1. create a directory for your calibration data files, for example: `mkdir ~/kinect_cal_data; cd ~/kinect_cal_data`
-2. Record images for the color camera: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 record color` 
-3. Calibrate the intrinsics: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 calibrate color`
-4. Record images for the ir camera: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 record ir`
-5. Calibrate the intrinsics of the ir camera: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 calibrate ir`
-6. Record images on both cameras synchronized: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 record sync`
-7. Calibrate the extrinsics: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 calibrate sync`
-8. Calibrate the depth measurements: `rosrun kinect2_calibration kinect2_calibration chess5x7x0.03 calibrate depth`
-9. Find out the serial number of your kinect2 by looking at the first lines printed out by the kinect2_bridge. The line looks like this: 
-  `device serial: 012526541941`
-10. Create the calibration results directory in kinect2_bridge/data/$serial: `roscd kinect2_bridge/data; mkdir 012526541941`
-11. Copy the following files from your calibration directory (~/kinect_cal_data) into the directory you just created: `calib_color.yaml  calib_depth.yaml  calib_ir.yaml  calib_pose.yaml`
-12. Restart the kinect2_bridge and be amazed at the better data.
- 
-
-
-## Calibration of the depth measurements
-
-I did some tests on the measured and the computed distance based on the detected chess board. It seems like the Kinect2 (or at least the Kinect2s I am using) has a static offset of around 24 mm. As shown in the following images, one can see, that the difference between measured and computed distance is unrelated to the x and y coordinates of the pixel and also unrelated to the distance.
-
-![plot.png](http://ai.uni-bremen.de/wiki/_media/software/plot.png)
-![plot_x.png](http://ai.uni-bremen.de/wiki/_media/software/plot_x.png)
-![plot_y.png](http://ai.uni-bremen.de/wiki/_media/software/plot_y.png)
-![plot_xy.png](http://ai.uni-bremen.de/wiki/_media/software/plot_xy.png)
-
-For the images above ~400 images of a 4x5x0.03 chessboard in different orientations, distances and image positions were used. The code for computing the depth offset is added to the calibration tool.
-
-### GNUPlot
-
-The depth calibration creates a file named `plot.dat` inside the calibration folder. This files contains the results of the calibration in 5 columns: x, y, computed depth, measured depth, difference between computed and measured depth.
-
-- Difference between measured/computed distance
-
-```
-set xlabel "Measured distance"
-set ylabel "Computed distance"
-plot 'plot.dat' using 3:4 with dots title "Difference between measured/computed distance"
+```bash
+sudo apt-get install opencl-headers
 ```
 
-- Difference relative to x coordinate
+### OpenCL/CUDA with Nvidia
 
-```
-set xlabel "X"
-set ylabel "Distance difference"
-plot 'plot.dat' using 1:5 with dots title "Difference relative to X-coordinate"
-```
+Go to [developer.nvidia.com/cuda-downloads](https://developer.nvidia.com/cuda-downloads) and select `linux`, `x86_64`, `Ubuntu`, `14.04`, `deb(network)`.
+Download the file and follow the instructions. Also install `nvidia-modprobe` and `opencl-headers`.
 
-- Difference relative to y coordinate
-
-```
-set xlabel "Y"
-set ylabel "Distance difference"
-plot 'plot.dat' using 2:5 with dots title "Difference relative to Y-coordinate"
+```bash
+sudo apt-get install nvidia-modprobe opencl-headers
 ```
 
-- Difference relative to XY-coordinate
+You also need to add CUDA paths to the system environment, add these lines to you `~/.bashrc`:
 
-```
-set xlabel "X"
-set ylabel "Y"
-set zlabel "Distance difference"
-splot 'plot.dat' using 1:2:5 with dots palette title "Difference relative to XY-coordinate"
+```bash
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
+export PATH="/usr/local/cuda/bin:${PATH}"
 ```
 
-## Example results
+A system-wide configuration of the libary path can be created with the following commands:
 
-Example calibration results can be found in the directory [kinect2_bridge/data/](../kinect2_bridge/data).
+```bash
+echo "/usr/local/cuda/lib64" | sudo tee /etc/ld.so.conf.d/cuda.conf
+sudo ldconfig
+```
 
-The following images were made before and after the calibration, using the kinect2 viewer.
- - For the superimposed images: `rosrun kinect2_viewer kinect2_viewer hd image`
- - For the point cloud images: `rosrun kinect2_viewer kinect2_viewer hd cloud`
- - For the superimposed and point cloud images: `rosrun kinect2_viewer kinect2_viewer hd both`
+### OpenCL with Intel
 
-raw here stands for raw data transmission aka uncompressed.
+You can either install a binary package from a PPA like [ppa:floe/beignet](https://launchpad.net/~floe/+archive/ubuntu/beignet), or build beignet yourself.
+It's recommended to use the binary from the PPA.
 
-Uncalibrated rectified images (depth and RGB superimposed): 
-![kinect2_cloud_calib](https://ai.uni-bremen.de/_media/kinect2_raw_nocalib.png)
+```bash
+sudo add-apt-repository ppa:floe/beignet && sudo apt-get update
+sudo apt-get install beignet beignet-dev opencl-headers
+```
 
-Calibrated rectified images (depth and RGB superimposed):
-![kinect2_cloud_calib](https://ai.uni-bremen.de/_media/kinect2_raw_calib.png)
+## Citation
 
-Uncalibrated depth cloud:
-![kinect2_cloud_calib](https://ai.uni-bremen.de/_media/kinect2_cloud_nocalib.png)
+If you used `iai_kinect2` for your work, please cite it.
 
-Calibrated depth cloud:
-![kinect2_cloud_calib](https://ai.uni-bremen.de/_media/kinect2_cloud_calib.png)
+```tex
+@misc{iai_kinect2,
+  author = {Wiedemeyer, Thiemo},
+  title = {{IAI Kinect2}},
+  organization = {Institute for Artificial Intelligence},
+  address = {University Bremen},
+  year = {2014 -- 2015},
+  howpublished = {\url{https://github.com/code-iai/iai\_kinect2}},
+  note = {Accessed June 12, 2015}
+}
+```
 
-Note how the color is now correctly applied on the depth data. This is specially evident around strong edges, like the edge of the white column on the left.
+The result should look something similar to this (may depend on the bibliography style used):
+
+```
+T. Wiedemeyer, “IAI Kinect2,” https://github.com/code-iai/iai_kinect2,
+Institute for Artificial Intelligence, University Bremen, 2014 – 2015,
+accessed June 12, 2015.
+```
+
+## Screenshots
+
+Here are some screenshots from our toolkit:
+![color image](http://ai.uni-bremen.de/wiki/_media/software/kinect2_color.jpg)
+![depth image](http://ai.uni-bremen.de/wiki/_media/software/kinect2_depth_colored.png)
+![point cloud](http://ai.uni-bremen.de/wiki/_media/software/kinect2_cloud.png)
+![image viewer](http://ai.uni-bremen.de/wiki/_media/software/kinect2_viewer.png)
+
