@@ -22,7 +22,7 @@ externalproject_add(libfreenect2
   #GIT_REPOSITORY https://github.com/OpenKinect/libfreenect2.git
 
   #--Configure step-------------
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../libfreenect2
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/./libfreenect2
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DENABLE_CXX11=ON -DENABLE_OPENCL=ON -DCUDA_PROPAGATE_HOST_FLAGS=off
   
   #--Build step-----------------
