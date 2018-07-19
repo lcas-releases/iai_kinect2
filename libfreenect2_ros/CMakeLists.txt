@@ -29,7 +29,7 @@ externalproject_add(libfreenect2
   BUILD_COMMAND make
 
   #--Install step---------------
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND make install DESTDIR=$ENV{DESTDIR}
   # &&  sudo cp ${CMAKE_CURRENT_SOURCE_DIR}/../libfreenect2/platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/ 
 )
 

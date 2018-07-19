@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>kinect2_bridge</name>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <description>The kinect2_bridge package</description>
 
   <maintainer email="mfernandezcarmona@lincoln.ac.uk">Manuel Fernandez-Carmona</maintainer>
