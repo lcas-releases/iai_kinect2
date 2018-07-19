@@ -1,0 +1,12 @@
+Source: ros-kinetic-kinect2-viewer
+Section: misc
+Priority: extra
+Maintainer: Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>
+Build-Depends: debhelper (>= 9.0.0), libpcl-dev, ros-kinetic-catkin, ros-kinetic-compressed-depth-image-transport, ros-kinetic-compressed-image-transport, ros-kinetic-cv-bridge, ros-kinetic-image-transport, ros-kinetic-kinect2-bridge, ros-kinetic-message-filters, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-kinect2-viewer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpcl-dev, libpcl1.7, ros-kinetic-compressed-depth-image-transport, ros-kinetic-compressed-image-transport, ros-kinetic-cv-bridge, ros-kinetic-image-transport, ros-kinetic-message-filters, ros-kinetic-message-runtime, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs
+Description: The kinect2_viewer package
