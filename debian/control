@@ -1,0 +1,12 @@
+Source: ros-kinetic-kinect2-registration
+Section: misc
+Priority: extra
+Maintainer: Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-cv-bridge, ros-kinetic-roscpp
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-kinect2-registration
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kinetic-cv-bridge, ros-kinetic-roscpp
+Description: The kinect2_registration package
