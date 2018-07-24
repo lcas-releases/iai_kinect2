@@ -1,0 +1,12 @@
+Source: ros-kinetic-kinect2-bridge
+Section: misc
+Priority: extra
+Maintainer: Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-compressed-depth-image-transport, ros-kinetic-cv-bridge, ros-kinetic-kinect2-registration, ros-kinetic-libfreenect2, ros-kinetic-message-filters, ros-kinetic-nodelet, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs, ros-kinetic-tf
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kinetic-kinect2-bridge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kinetic-compressed-depth-image-transport, ros-kinetic-cv-bridge, ros-kinetic-depth-image-proc, ros-kinetic-kinect2-registration, ros-kinetic-libfreenect2, ros-kinetic-message-runtime, ros-kinetic-nodelet, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs, ros-kinetic-tf
+Description: The kinect2_bridge package
