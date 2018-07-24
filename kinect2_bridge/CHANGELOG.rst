@@ -2,6 +2,18 @@
 Changelog for package kinect2_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.8 (2018-07-24)
+------------------
+* Libfreenect2 dev (`#2 <https://github.com/LCAS/iai_kinect2/issues/2>`_)
+  * Changed freenect2 from submodule to subproject with git. catkin_make_isolated --install works
+  * m.ch.
+  * added git as a dependence and install targets
+  * w.i.p.
+  * Update CMakeLists.txt
+  * freenect2 moved to its own fork
+  * Works in my docker...
+* Contributors: Manuel Fernandez-Carmona
+
 0.0.7 (2018-07-23)
 ------------------
 
