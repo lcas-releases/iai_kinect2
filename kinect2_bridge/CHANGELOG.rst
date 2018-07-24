@@ -2,6 +2,11 @@
 Changelog for package kinect2_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.9 (2018-07-24)
+------------------
+* Changed readme.md file in kinect2_bridge
+* Contributors: Manuel Fernandez-Carmona
+
 0.0.8 (2018-07-24)
 ------------------
 * Libfreenect2 dev (`#2 <https://github.com/LCAS/iai_kinect2/issues/2>`_)
