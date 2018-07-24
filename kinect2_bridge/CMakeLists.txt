@@ -6,10 +6,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
-# Where it should find libfreenect
-set(freenect2_DIR ${CMAKE_INSTALL_PREFIX})
-
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBT_USE_DOUBLE_PRECISION -Wall")
 # Unused warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wuninitialized -Winit-self -Wunused-function -Wunused-label -Wunused-variable -Wunused-but-set-variable -Wunused-but-set-parameter")
@@ -28,6 +24,7 @@ ELSE()
   MESSAGE(ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 ENDIF()
 
+# catkin package libfreenect2 offers now freenect2 library
 find_package(freenect2 REQUIRED HINTS "$ENV{HOME}/freenect2")
 
 find_package(catkin REQUIRED COMPONENTS roscpp rostime tf std_msgs sensor_msgs nodelet cv_bridge compressed_depth_image_transport kinect2_registration)
@@ -50,9 +47,8 @@ find_package(OpenCV REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES kinect2_bridge
   CATKIN_DEPENDS kinect2_registration
-  DEPENDS libfreenect2_ros
+#  DEPENDS system_lib
 )
 
 ###########
@@ -87,6 +83,7 @@ add_library(kinect2_bridge_nodelet SHARED src/kinect2_bridge.cpp)
 target_link_libraries(kinect2_bridge_nodelet
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+# this should be in catkin_LIBRARIES
   ${freenect2_LIBRARY}
   ${kinect2_registration_LIBRARY}
 )
@@ -95,26 +92,14 @@ add_executable(kinect2_bridge src/kinect2_bridge.cpp)
 target_link_libraries(kinect2_bridge
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+# this should be in catkin_LIBRARIES
   ${freenect2_LIBRARY}
   ${kinect2_registration_LIBRARY}
 )
 
-add_dependencies(kinect2_bridge libfreenect2_ros)
-add_dependencies(kinect2_bridge_nodelet libfreenect2_ros)
-
 #############
 ## Install ##
 #############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
 
 ## Mark executables and/or libraries for installation
 install(TARGETS kinect2_bridge kinect2_bridge_nodelet
@@ -142,15 +127,3 @@ install(FILES
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_kinect2_bridge.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
