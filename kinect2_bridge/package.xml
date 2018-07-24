@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>kinect2_bridge</name>
-  <version>0.0.7</version>
+  <version>0.0.8</version>
   <description>The kinect2_bridge package</description>
 
   <maintainer email="mfernandezcarmona@lincoln.ac.uk">Manuel Fernandez-Carmona</maintainer>
@@ -11,8 +11,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
 
-  <build_depend>libfreenect2_ros</build_depend>
-
+  <build_depend>libfreenect2</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rostime</build_depend>
   <build_depend>tf</build_depend>
@@ -24,6 +23,8 @@
   <build_depend>nodelet</build_depend>
   <build_depend>cv_bridge</build_depend><!-- Depend on cv_bridge instead of libopencv-dev to support ROS Hydro.-->
 
+
+  <run_depend>libfreenect2</run_depend>
   <run_depend>message_runtime</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rostime</run_depend>
