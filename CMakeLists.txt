@@ -61,7 +61,7 @@ string(REPLACE "\n" ";" FILES_LIST ${FILES_STRING})
 add_custom_target(additional_files_${PROJECT_NAME}
   SOURCES
   ${FILES_LIST}
-  ${PROJECT_SOURCE_DIR}/../README.md
+  ${PROJECT_SOURCE_DIR}/README.md
 )
 
 include_directories(include
