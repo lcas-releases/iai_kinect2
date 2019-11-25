@@ -1,0 +1,56 @@
+ros-melodic-iai-kinect2 (0.0.9-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Mon, 23 Jul 2018 23:00:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.8-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Mon, 23 Jul 2018 23:00:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.7-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Sun, 22 Jul 2018 23:00:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.6-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Thu, 19 Jul 2018 19:08:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.5-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Thu, 19 Jul 2018 17:46:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.4-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Thu, 19 Jul 2018 17:34:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.3-1bionic) bionic; urgency=high
+
+
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Thu, 19 Jul 2018 17:33:00 -0000
+
+ros-melodic-iai-kinect2 (0.0.2-1bionic) bionic; urgency=high
+
+  * changelogs
+  * changelogs
+  * libfreenect2 compiles as an external project from kinect2_bridge
+  * renamed depth_registration package to kinect2_registration.
+    renamed registration_viewer package to kinect2_viewer.
+  * updated package dependencies.
+  * moved kinect2 related tools into a new repository.
+  * Contributors: Marc Hanheide, Thiemo Wiedemeyer, mailto:mfernandezcarmona@lincoln.ac.uk
+
+ -- Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>  Thu, 19 Jul 2018 13:51:00 -0000
+
+
