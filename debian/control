@@ -1,0 +1,12 @@
+Source: ros-melodic-kinect2-viewer
+Section: misc
+Priority: optional
+Maintainer: Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>
+Build-Depends: debhelper (>= 9.0.0), libpcl-dev, ros-melodic-catkin, ros-melodic-compressed-depth-image-transport, ros-melodic-compressed-image-transport, ros-melodic-cv-bridge, ros-melodic-image-transport, ros-melodic-kinect2-bridge, ros-melodic-message-filters, ros-melodic-roscpp, ros-melodic-rostime, ros-melodic-sensor-msgs, ros-melodic-std-msgs
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-melodic-kinect2-viewer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpcl-apps1.8, libpcl-common1.8, libpcl-dev, libpcl-features1.8, libpcl-filters1.8, libpcl-io1.8, libpcl-kdtree1.8, libpcl-keypoints1.8, libpcl-ml1.8, libpcl-octree1.8, libpcl-outofcore1.8, libpcl-people1.8, libpcl-recognition1.8, libpcl-registration1.8, libpcl-sample-consensus1.8, libpcl-search1.8, libpcl-segmentation1.8, libpcl-stereo1.8, libpcl-surface1.8, libpcl-tracking1.8, libpcl-visualization1.8, ros-melodic-compressed-depth-image-transport, ros-melodic-compressed-image-transport, ros-melodic-cv-bridge, ros-melodic-image-transport, ros-melodic-message-filters, ros-melodic-message-runtime, ros-melodic-roscpp, ros-melodic-rostime, ros-melodic-sensor-msgs, ros-melodic-std-msgs
+Description: The kinect2_viewer package
