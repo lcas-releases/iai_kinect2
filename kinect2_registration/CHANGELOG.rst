@@ -2,6 +2,11 @@
 Changelog for package kinect2_registration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.10 (2019-11-26)
+-------------------
+* added opencl dep
+* Contributors: Marc Hanheide
+
 0.0.9 (2018-07-24)
 ------------------
 
