@@ -2,6 +2,11 @@
 Changelog for package kinect2_bridge
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.10 (2019-11-26)
+-------------------
+* added opencl dep
+* Contributors: Marc Hanheide
+
 0.0.9 (2018-07-24)
 ------------------
 * Changed readme.md file in kinect2_bridge

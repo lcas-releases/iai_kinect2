@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>kinect2_bridge</name>
-  <version>0.0.9</version>
+  <version>0.0.10</version>
   <description>The kinect2_bridge package</description>
 
   <maintainer email="mfernandezcarmona@lincoln.ac.uk">Manuel Fernandez-Carmona</maintainer>
@@ -36,6 +36,8 @@
   <run_depend>nodelet</run_depend>
   <run_depend>depth_image_proc</run_depend>
   <run_depend>cv_bridge</run_depend><!-- Depend on cv_bridge instead of libopencv-dev to support ROS Hydro.-->
+  <build_depend>opencl_latest</build_depend>
+  <run_depend>opencl_latest</run_depend>
 
   <export>
     <nodelet plugin="${prefix}/nodelet_plugins.xml" />
