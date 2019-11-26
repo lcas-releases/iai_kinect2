@@ -1,0 +1,12 @@
+Source: ros-melodic-iai-kinect2
+Section: misc
+Priority: optional
+Maintainer: Manuel Fernandez-Carmona <mfernandezcarmona@lincoln.ac.uk>
+Build-Depends: debhelper (>= 9.0.0), ros-melodic-catkin
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-melodic-iai-kinect2
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-kinect2-bridge, ros-melodic-kinect2-calibration, ros-melodic-kinect2-registration, ros-melodic-kinect2-viewer
+Description: The iai_kinect2 metapackage
