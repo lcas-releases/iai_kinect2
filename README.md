@@ -1,3 +1,31 @@
+## iai_kinect2 (melodic) - 0.0.10-1
+
+The packages in the `iai_kinect2` repository were released into the `melodic` distro by running `/usr/bin/bloom-release -t melodic -r melodic iai_kinect2` on `Tue, 26 Nov 2019 15:23:13 -0000`
+
+These packages were released:
+- `iai_kinect2`
+- `kinect2_bridge`
+- `kinect2_calibration`
+- `kinect2_registration`
+- `kinect2_viewer`
+
+Version of package(s) in repository `iai_kinect2`:
+
+- upstream repository: https://github.com/LCAS/iai_kinect2.git
+- release repository: https://github.com/lcas-releases/iai_kinect2.git
+- rosdistro version: `0.0.9-1`
+- old version: `0.0.9-1`
+- new version: `0.0.10-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.0`
+- catkin_pkg version: `0.4.14`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.7.5`
+- vcstools version: `0.1.42`
+
+
 ## iai_kinect2 (melodic) - 0.0.9-1
 
 The packages in the `iai_kinect2` repository were released into the `melodic` distro by running `/usr/bin/bloom-release -n -t melodic -r melodic iai_kinect2` on `Mon, 25 Nov 2019 16:01:55 -0000`
